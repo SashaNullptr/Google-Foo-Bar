@@ -36,14 +36,21 @@
 # Output:
 #     (int) 3
 
+# def fibonacci_seq( n ):
+#
+#     if n == 0:
+#         return 0
+#     elif n == 1:
+#         return 1
+#     else:
+#         return fibonacci_seq( n - 1 ) + fibonacci_seq( n - 2 )
+
+from math import sqrt
+
 def fibonacci_seq( n ):
 
-    if n == 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fibonacci_seq( n - 1 ) + fibonacci_seq( n - 2 )
+    phi = (1 + sqrt(5)) / 2
+    return int(phi ** n / sqrt(5) + 0.5)
 
 def fibonacci_series( n ):
     # It can be shown that sum( F[n] ) = F[n+2] - 1
