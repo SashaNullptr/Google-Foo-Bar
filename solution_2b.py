@@ -50,7 +50,7 @@ from math import sqrt
 def fibonacci_seq( n ):
 
     phi = (1 + sqrt(5)) / 2
-    return int(phi ** n / sqrt(5) + 0.5)
+    return int(round(phi**n)/sqrt(5))
 
 def fibonacci_series( n ):
     # It can be shown that sum( F[n] ) = F[n+2] - 1
