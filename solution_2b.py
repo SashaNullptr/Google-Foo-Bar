@@ -35,3 +35,44 @@
 #     (int) total_lambs = 143
 # Output:
 #     (int) 3
+
+def fibonacci_seq( n ):
+
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci_seq( n - 1 ) + fibonacci_seq( n - 2 )
+
+def fibonacci_series( n ):
+    # It can be shown that sum( F[n] ) = F[n+2] - 1
+    return fibonacci_seq( n + 2 ) - 1
+
+def fibonacci_series_offset( n ):
+    # We need to apply an offset to take into account that the 0'th minion gets
+    # 1 LAMB instead of 0.
+    return fibonacci_series( n + 1 )
+
+def power_2_series( n ):
+    # It can be shown that sum( 2^n ) = 2^(n+1) - 1
+    return 2**( n + 1 ) - 1
+
+def find_nearest( series_func, max_value ):
+
+    counter = 0
+
+    while True:
+
+        if series_func( counter ) > max_value:
+            return counter - 1
+        elif series_func( counter ) == max_value:
+            return counter
+        else:
+            counter += 1
+
+def get_diff( max_value ):
+
+    # Note we will always have # Minions Stingey > # Minions Generous so we don't
+    # need to worry about negative values.
+    return find_nearest( fibonacci_series_offset, max_value ) - find_nearest( power_2_series, max_value )
