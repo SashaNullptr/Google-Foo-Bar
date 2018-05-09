@@ -44,13 +44,12 @@
 #         return 1
 #     else:
 #         return fibonacci_seq( n - 1 ) + fibonacci_seq( n - 2 )
-
 from math import sqrt
 
 def fibonacci_seq( n ):
 
     phi = (1 + sqrt(5)) / 2
-    return int(round(phi**n)/sqrt(5))
+    return int(phi ** n / sqrt(5) + 0.5)
 
 def fibonacci_series( n ):
     # It can be shown that sum( F[n] ) = F[n+2] - 1
@@ -71,12 +70,17 @@ def find_nearest( series_func, max_value ):
 
     while True:
 
-        if series_func( counter ) > max_value:
-            return counter - 1
-        elif series_func( counter ) == max_value:
+        current_lambds = series_func( counter )
+
+        if current_lambds > max_value:
+            if current_lambds + fibonacci_seq( counter + 1 ) < max_value:
+                return n
+            else:
+                return counter - 1
+        elif current_lambds == max_value:
             return counter
-        else:
-            counter += 1
+
+        counter += 1
 
 def get_diff( max_value ):
 
