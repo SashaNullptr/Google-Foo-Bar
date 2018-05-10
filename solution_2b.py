@@ -121,7 +121,7 @@ def find_nearest_p2( max_value ):
         current_lambds = power_2_series( counter )
 
         if current_lambds > max_value:
-            if ( power_2(counter-3) + power_2(counter-2) + power_2_series(counter - 1) ) < max_value:
+            if ( power_2(counter-3) + power_2(counter-2) + power_2_series(counter - 1) ) <= max_value:
                 return counter
             else:
                 return counter - 1
