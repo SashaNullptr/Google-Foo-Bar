@@ -36,20 +36,65 @@
 # Output:
 #     (int) 3
 
+def pow(x, n, I, mult):
+    """
+    Returns x to the power of n. Assumes I to be identity relative to the
+    multiplication given by mult, and n to be a positive integer.
+    """
+    if n == 0:
+        return I
+    elif n == 1:
+        return x
+    else:
+        y = pow(x, n // 2, I, mult)
+        y = mult(y, y)
+        if n % 2:
+            y = mult(x, y)
+        return y
+
+
+def identity_matrix(n):
+    """Returns the n by n identity matrix."""
+    r = list(range(n))
+    return [[1 if i == j else 0 for i in r] for j in r]
+
+
+def matrix_multiply(A, B):
+    BT = list(zip(*B))
+    return [[sum(a * b
+                 for a, b in zip(row_a, col_b))
+            for col_b in BT]
+            for row_a in A]
+
+
+def fib(n):
+    F = pow([[1, 1], [1, 0]], n, identity_matrix(2), matrix_multiply)
+    return F[0][1]
+
+M = {0: 0, 1: 1}
+
+
+def fibonacci_seq(n):
+    if n in M:
+        return M[n]
+    M[n] = fib(n - 1) + fib(n - 2)
+    return M[n]
+
+def fibonacci_seq_recurse( n ):
+
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci_seq( n - 1 ) + fibonacci_seq( n - 2 )
+
+# from math import sqrt
+#
 # def fibonacci_seq( n ):
 #
-#     if n == 0:
-#         return 0
-#     elif n == 1:
-#         return 1
-#     else:
-#         return fibonacci_seq( n - 1 ) + fibonacci_seq( n - 2 )
-from math import sqrt
-
-def fibonacci_seq( n ):
-
-    phi = (1 + sqrt(5)) / 2
-    return int(phi ** n / sqrt(5) + 0.5)
+#     phi = (1 + sqrt(5)) / 2
+#     return int(phi ** n / sqrt(5) + 0.5)
 
 def fibonacci_series( n ):
     # It can be shown that sum( F[n] ) = F[n+2] - 1
@@ -60,23 +105,41 @@ def fibonacci_series_offset( n ):
     # 1 LAMB instead of 0.
     return fibonacci_series( n + 1 )
 
+def power_2( n ):
+    return 2**n
+
 def power_2_series( n ):
-    # It can be shown that sum( 2^n ) = 2^(n+1) - 1
+    # It can be shown that sum( 2^n ) = 2^(n+1) - 1`
     return 2**( n + 1 ) - 1
 
-def find_nearest( series_func, max_value ):
+def find_nearest_p2( max_value ):
 
     counter = 0
 
     while True:
 
-        current_lambds = series_func( counter )
+        current_lambds = power_2_series( counter )
 
         if current_lambds > max_value:
-            if current_lambds + fibonacci_seq( counter + 1 ) < max_value:
-                return n
+            if ( power_2(counter-3) + power_2(counter-2) + power_2_series(counter - 1) ) < max_value:
+                return counter
             else:
                 return counter - 1
+        elif current_lambds == max_value:
+            return counter
+
+        counter += 1
+
+def find_nearest_fib( max_value ):
+
+    counter = 0
+
+    while True:
+
+        current_lambds = fibonacci_series_offset( counter )
+
+        if current_lambds > max_value:
+            return counter - 1
         elif current_lambds == max_value:
             return counter
 
@@ -86,4 +149,4 @@ def get_diff( max_value ):
 
     # Note we will always have # Minions Stingey > # Minions Generous so we don't
     # need to worry about negative values.
-    return find_nearest( fibonacci_series_offset, max_value ) - find_nearest( power_2_series, max_value )
+    return find_nearest_fib( max_value ) - find_nearest_p2( max_value )
