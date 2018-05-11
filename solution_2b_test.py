@@ -20,16 +20,6 @@ def print_function_name(func):
 
 class SolutionTest( unittest.TestCase ):
 
-    # @print_function_name
-    # def test_fib(self):
-    #
-    #     fib_seq_1 = [ fibonacci_seq(n) for n in range(0, 1000) ]
-    #     fib_seq_2 = [ fib(n) for n in range(0, 1000) ]
-    #
-    #     diff = [x for x in fib_seq_1 if x not in fib_seq_2]
-    #     print( diff )
-    #
-    #     self.assertTrue( not diff )
 
     @print_function_name
     def test_basic_1(self):
@@ -54,14 +44,6 @@ class SolutionTest( unittest.TestCase ):
 
         ans = get_diff( t )
         self.assertEqual( ans, 0 )
-
-    @print_function_name
-    def test_power_2(self):
-
-        t = 2**3
-
-        ans = get_diff( t )
-        self.assertEqual( ans, 1 )
 
     @print_function_name
     def test_power_2(self):

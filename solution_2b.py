@@ -36,65 +36,28 @@
 # Output:
 #     (int) 3
 
-def pow(x, n, I, mult):
-    """
-    Returns x to the power of n. Assumes I to be identity relative to the
-    multiplication given by mult, and n to be a positive integer.
-    """
-    if n == 0:
-        return I
-    elif n == 1:
-        return x
-    else:
-        y = pow(x, n // 2, I, mult)
-        y = mult(y, y)
-        if n % 2:
-            y = mult(x, y)
-        return y
-
-
-def identity_matrix(n):
-    """Returns the n by n identity matrix."""
-    r = list(range(n))
-    return [[1 if i == j else 0 for i in r] for j in r]
-
-
-def matrix_multiply(A, B):
-    BT = list(zip(*B))
-    return [[sum(a * b
-                 for a, b in zip(row_a, col_b))
-            for col_b in BT]
-            for row_a in A]
-
-
-def fib(n):
-    F = pow([[1, 1], [1, 0]], n, identity_matrix(2), matrix_multiply)
-    return F[0][1]
-
 M = {0: 0, 1: 1}
 
-
 def fibonacci_seq(n):
+    """
+    A relatively fast but precise version of the Fibonacci Sequence.
+
+    Note that naive recusrive implementations were causing the test harness to time-out
+    where as fast closed-form solutions such as:
+        phi = (math.sqrt(5) + 1) / 2
+        F_n = int(phi ** n / math.sqrt(5) + 0.5)
+
+    are prone to numerical errors for large n, which also showed up in the test harness.
+
+    This approach seems to strike a good balance between speed and precision.
+    """
+
+    if n < 0:
+        raise IndexError( "Index is too small!" )
     if n in M:
         return M[n]
-    M[n] = fib(n - 1) + fib(n - 2)
+    M[n] = fibonacci_seq(n - 1) + fibonacci_seq(n - 2)
     return M[n]
-
-def fibonacci_seq_recurse( n ):
-
-    if n == 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fibonacci_seq( n - 1 ) + fibonacci_seq( n - 2 )
-
-# from math import sqrt
-#
-# def fibonacci_seq( n ):
-#
-#     phi = (1 + sqrt(5)) / 2
-#     return int(phi ** n / sqrt(5) + 0.5)
 
 def fibonacci_series( n ):
     # It can be shown that sum( F[n] ) = F[n+2] - 1
@@ -106,13 +69,41 @@ def fibonacci_series_offset( n ):
     return fibonacci_series( n + 1 )
 
 def power_2( n ):
-    return 2**n
+    # Power of two, but adjusted so negative values of n return 0.
+    # Usless because this term will only appear in a sum.
+
+    if n < 0:
+        return 0
+    else:
+        return 2**n
 
 def power_2_series( n ):
-    # It can be shown that sum( 2^n ) = 2^(n+1) - 1`
-    return 2**( n + 1 ) - 1
+    # It can be shown that sum( 2^n ) = 2^(n+1) - 1
+    # Again we apply the rule that negative n is mapped to zero.
+
+    if n < 0:
+        return 0
+    else:
+        return 2**( n + 1 ) - 1
+
+def twiddle_factor( n ):
+    # Not Cooley-Tukey FFT factors, unfortunately.
+    # This term is designed to handle the fringe-case when computing the most generous
+    # way to hand out LAMBs.
+    # That is, we could possibly have the case that
+    # sum_(n) 2^n > #LAMBs but 2^(n-2) + 2^(n-1) + sum_(n-1) 2^n <= # LAMBs
+    # That is we can effectively squeeze one extra minion in by applying the least
+    # generous rule even if we are dealing with the most generous case.
+
+    return power_2(n-2) + power_2(n-1)
 
 def find_nearest_p2( max_value ):
+    """
+    Find the number of minions that could be paid out for number of LAMBs given
+    by "max_value" using the "Most Generous" ( Power of 2 ) rule, with twiddle
+    factor to account for the case where
+    sum_(n) 2^n > #LAMBs but 2^(n-2) + 2^(n-1) + sum_(n-1) 2^n <= # LAMBs.
+    """
 
     counter = 0
 
@@ -120,17 +111,29 @@ def find_nearest_p2( max_value ):
 
         current_lambds = power_2_series( counter )
 
-        if current_lambds > max_value:
-            if ( power_2(counter-3) + power_2(counter-2) + power_2_series(counter - 1) ) <= max_value:
-                return counter
-            else:
-                return counter - 1
+        if current_lambds < max_value:
+            counter += 1
+            continue
+
         elif current_lambds == max_value:
             return counter
 
-        counter += 1
+        elif current_lambds > max_value:
+
+            check = ( twiddle_factor(counter) + power_2_series(counter-1) )
+
+            if check > max_value:
+                return counter - 1 # Somtimes this needs to be counter?
+            elif check == max_value:
+                return counter
+            else:
+                return counter
 
 def find_nearest_fib( max_value ):
+    """
+    Find the number of minions that could be paid out for a given number of LAMBs
+    using the "Least Generous" ( Fibonacci Sum ) rule.
+    """
 
     counter = 0
 
@@ -138,15 +141,37 @@ def find_nearest_fib( max_value ):
 
         current_lambds = fibonacci_series_offset( counter )
 
+        if current_lambds < max_value:
+            counter += 1
+            continue
+
         if current_lambds > max_value:
             return counter - 1
         elif current_lambds == max_value:
             return counter
-
-        counter += 1
 
 def get_diff( max_value ):
 
     # Note we will always have # Minions Stingey > # Minions Generous so we don't
     # need to worry about negative values.
     return find_nearest_fib( max_value ) - find_nearest_p2( max_value )
+
+
+# Our general startegy for this problem relies on identifying what series
+# models the "Most Generous" and "Least Generous" cases. In the most generous case
+# the sequence of minion pay-outs will look like the following:
+#     [NULL]->[1]->[2]->[4]-> ... ->[2^(n-1)]->[2^n]
+# This is simply a power-of-two sequence, so we want to find the smallest number n
+# such that sum_{k=0}^{n} 2^n < #LAMBs.
+#
+# If we apply the least geneous rule we would expect our sequence to look like:
+#     [NULL]->[1]->[1]->[2]->[3]-> ... ->[F_(n-1)]->[F_n]
+# Which can recongnize right away as the Fibonacci sequence expect for F_0 = 0.
+# So in this case we want to find the smallest n s.t. sum_{k=0}^{n} F_(n+1) < #LAMBs.
+#
+# Note that the way we compute this is slightly different -- we compute the smallest
+# n in each case MINUS 1. This does not effect our final results since the difference
+# between the most and least generous case absords this detail.
+
+def answer(total_lambs):
+    return get_diff( total_lambs )
