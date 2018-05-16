@@ -38,10 +38,14 @@
 #     (int) 5
 #
 
+# We need to increase the recursion depth so we don't error out on large inputs.
 from sys import setrecursionlimit
 setrecursionlimit(1500)
 
 def count_factors_of_2( n ):
+    """
+    Count the number of times n is divisible by 2.
+    """
 
     reduced_value = n
     counter = 0
@@ -53,6 +57,9 @@ def count_factors_of_2( n ):
     return counter
 
 def most_factors( n ):
+    """
+    For an odd number n, identify the closest even number with the most factors of 2.
+    """
 
     num_factors_2_up = count_factors_of_2( n + 1 )
     num_factors_2_down = count_factors_of_2( n - 1 )
@@ -65,11 +72,41 @@ def most_factors( n ):
         return n - 1
 
 def minimum_steps( n ):
+    """
+    Find the minimum number of operations to transform an integer n into 1.
 
+    The operations that can be performed are:
+        * Divide by 2
+        * Add 1
+        * Subtract 1
+
+    We know that dividing by two is the "cheapest" of our three possible options,
+    so we would like to do it as often as possible.
+
+    With this in mind we will reduce our number recursively until we hit 1
+    trying to divide by 2 as often as we can.
+
+    Our procedure will go as follows:
+
+        * For each step check to see if our number is even or odd.
+        * If it's even, divide it by two ( the "cheap" option )
+        * If it's odd check the number plus 1 and minus 1. Pick the option with the most
+            factors of 2. If both have the same number of factors, pick option closest to 1 ( n - 1 ).
+        * Add one to the total operations count and recurse
+        * Stop if the we hit our target of 1.
+    """
+
+    # Pathological case when n = 0 to begin with.
     if n == 0:
         return 1
+
+    # Our non-pathological base-case.
     if n == 1:
         return 0
+
+    # We shouldn't need this base care, but the algorithm as written struggles
+    # when it gets to three. For the time being we can help it out and manually
+    # return the number of operations we need to get to 1 from 3.
     if n == 3:
         return 2
 
@@ -80,5 +117,8 @@ def minimum_steps( n ):
 
 def answer(n):
 
+    # Luckily for us Python has arbitrary precision Integers by default and we
+    # will never have the case where we fail to cast a string to and int. At least
+    # for # bits <= 309.
     x = int(n)
     return minimum_steps(x)
