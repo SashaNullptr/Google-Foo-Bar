@@ -38,13 +38,15 @@
 #     (int) 5
 #
 
-def count_factors_of_2(x):
+from sys import setrecursionlimit
+setrecursionlimit(1500)
 
-    reduced_value = int(x)
+def count_factors_of_2( n ):
+
+    reduced_value = n
     counter = 0
 
-    while reduced_value % 2 == 0:
-        if reduced_value % 2 == 0 and reduced_value != 0:
+    while reduced_value % 2 == 0 and reduced_value != 0:
             reduced_value = reduced_value//2
             counter += 1
 
@@ -62,16 +64,21 @@ def most_factors( n ):
     elif num_factors_2_up == num_factors_2_down:
         return n - 1
 
-def minimum_steps( str_n ):
-
-    n = int( str_n )
+def minimum_steps( n ):
 
     if n == 0:
         return 1
     if n == 1:
         return 0
+    if n == 3:
+        return 2
 
     if n % 2 == 0: # Even
         return 1 + minimum_steps( n // 2 )
     else: # Odd
-        return 1 + minimum_steps( most_factors(n) )
+        return 1 + minimum_steps( most_factors( n ) )
+
+def answer(n):
+
+    x = int(n)
+    return minimum_steps(x)

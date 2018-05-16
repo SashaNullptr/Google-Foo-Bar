@@ -52,17 +52,6 @@ class SolutionTest( unittest.TestCase ):
         self.assertEqual( ans, 0 )
 
     @print_function_name
-    def test_rounding(self):
-
-        up = mod_2_up( 15 )
-        print( up )
-        self.assertEqual( up, 16 )
-
-        down = mod_2_down( 15 )
-        print( down )
-        self.assertEqual( down, 14 )
-
-    @print_function_name
     def test_factor(self):
 
         self.assertEqual( 0, count_factors_of_2( 15 ) )
@@ -72,7 +61,7 @@ class SolutionTest( unittest.TestCase ):
     @print_function_name
     def test_large_1(self):
 
-        t = 2**64
+        t = str(2**64)
         ans = minimum_steps( t )
 
         self.assertEqual( 64, ans )
@@ -80,18 +69,25 @@ class SolutionTest( unittest.TestCase ):
     @print_function_name
     def test_large_2(self):
 
-        t = 2**32 + 1
+        t = str(2**32 + 1)
         ans = minimum_steps( t )
 
         self.assertEqual( 33, ans )
 
     @print_function_name
-    def test_large_2(self):
+    def test_large_3(self):
 
         t = str(self.__random_with_N_digits( 309 ))
         ans = minimum_steps( t )
 
         self.assertTrue( True )
+
+    @print_function_name
+    def test_str_cast(self):
+        t = str(self.__random_with_N_digits( 309 ))
+        test = str(int(t))
+
+        self.assertEqual( t, test )
 
     def __random_with_N_digits(self, n):
         range_start = 10**(n-1)
