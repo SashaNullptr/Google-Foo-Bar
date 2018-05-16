@@ -2,6 +2,9 @@ import unittest
 import os
 import logging
 import inspect
+from random import randint
+from sys import setrecursionlimit
+setrecursionlimit(1500)
 
 from solution_3a import *
 
@@ -34,6 +37,66 @@ class SolutionTest( unittest.TestCase ):
         ans = minimum_steps( t )
         self.assertEqual( ans, 5 )
 
+    @print_function_name
+    def test_null(self):
+        t = "0"
+
+        ans = minimum_steps( t )
+        self.assertEqual( ans, 1 )
+
+    @print_function_name
+    def test_unitary(self):
+        t = "1"
+
+        ans = minimum_steps( t )
+        self.assertEqual( ans, 0 )
+
+    @print_function_name
+    def test_rounding(self):
+
+        up = mod_2_up( 15 )
+        print( up )
+        self.assertEqual( up, 16 )
+
+        down = mod_2_down( 15 )
+        print( down )
+        self.assertEqual( down, 14 )
+
+    @print_function_name
+    def test_factor(self):
+
+        self.assertEqual( 0, count_factors_of_2( 15 ) )
+        self.assertEqual( 1, count_factors_of_2( 14 ) )
+        self.assertEqual( 3, count_factors_of_2( 2**3 ) )
+
+    @print_function_name
+    def test_large_1(self):
+
+        t = 2**64
+        ans = minimum_steps( t )
+
+        self.assertEqual( 64, ans )
+
+    @print_function_name
+    def test_large_2(self):
+
+        t = 2**32 + 1
+        ans = minimum_steps( t )
+
+        self.assertEqual( 33, ans )
+
+    @print_function_name
+    def test_large_2(self):
+
+        t = str(self.__random_with_N_digits( 309 ))
+        ans = minimum_steps( t )
+
+        self.assertTrue( True )
+
+    def __random_with_N_digits(self, n):
+        range_start = 10**(n-1)
+        range_end = (10**n)-1
+        return randint(range_start, range_end)
 
 if __name__ == '__main__':
     unittest.main()

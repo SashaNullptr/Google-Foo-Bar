@@ -36,43 +36,42 @@
 #     (string) n = "15"
 # Output:
 #     (int) 5
+#
 
-
-def largest_power_2(x):
-    return 2**(x-1).bit_length()
-
-def smallest_power_2(x):
-    return 2**(x).bit_length()
-
-def mod_2(x):
-    return int( 2 * round( x / 2 ))
-
-def minimum_steps(x):
+def count_factors_of_2(x):
 
     reduced_value = int(x)
-    op_counter = 0
+    counter = 0
 
-    while True:
+    while reduced_value % 2 == 0:
+        if reduced_value % 2 == 0 and reduced_value != 0:
+            reduced_value = reduced_value//2
+            counter += 1
 
-        print( "Current value: ", reduced_value )
+    return counter
 
-        nearest_mod_2 = mod_2( reduced_value )
+def most_factors( n ):
 
-        print( "Nearest number divisible by 2: ", nearest_mod_2 )
+    num_factors_2_up = count_factors_of_2( n + 1 )
+    num_factors_2_down = count_factors_of_2( n - 1 )
 
-        multiple_2_steps = abs( reduced_value - nearest_mod_2 )
+    if num_factors_2_up > num_factors_2_down:
+        return n + 1
+    elif num_factors_2_up < num_factors_2_down:
+        return n - 1
+    elif num_factors_2_up == num_factors_2_down:
+        return n - 1
 
-        print( "Had to move ", multiple_2_steps, " to reach nearest value mod 2.")
+def minimum_steps( str_n ):
 
-        op_counter += multiple_2_steps
+    n = int( str_n )
 
-        reduced_value = nearest_mod_2
+    if n == 0:
+        return 1
+    if n == 1:
+        return 0
 
-        reduced_value /= 2
-
-        if( reduced_value == 1 ):
-            return op_counter + 1
-        if( reduced_value == 0 ):
-            return op_counter
-
-        op_counter += 1
+    if n % 2 == 0: # Even
+        return 1 + minimum_steps( n // 2 )
+    else: # Odd
+        return 1 + minimum_steps( most_factors(n) )
