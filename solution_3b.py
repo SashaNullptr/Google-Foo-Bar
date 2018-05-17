@@ -52,3 +52,45 @@
 #     (int) n = 200
 # Output:
 #     (int) 487067745
+
+def helper( t, p, n, memo ):
+
+    if( t == n ):
+        return 1
+
+    if( memo[t][p] != -1 ):
+        return memo[t][p]
+
+    memo[t][p] = 0
+
+    for i in range( p+1, n-t+1 ):
+        memo[t][p] += helper( t+i, i, n, memo )
+
+    return memo[t][p]
+
+def num_staircases( n ):
+    memo = [[-1 for x in range(n+1)] for y in range(n+1)]
+
+    tot_staircases = 0
+
+    for j in range (1,n):
+        tot_staircases += helper(j,j,n,memo)
+
+    return tot_staircases
+
+# def solve( n, m, memo ):
+#     if n == 0:
+#         return 1
+#     if m == 0:
+#         return 0
+#
+#     ret = memo[n][m]
+#
+#     if ret == -1:
+#         ret = ( solve(n-m,m-1,memo) if n >= m else 0 ) + solve(n,m-1,memo)
+#     return ret
+#
+# def num_staircases( n ):
+#     memo = [[-1 for x in range(n+1)] for y in range(n+1)]
+#
+#     return solve( n, n-1, memo )
