@@ -47,5 +47,13 @@ class SolutionTest( unittest.TestCase ):
 
         self.assertEqual( ans, 14 )
 
+    @print_function_name
+    def test_large(self):
+        s = 0
+        l = 4000
+        ans = check_sum( s, l )
+
+        self.assertTrue( True )
+
 if __name__ == '__main__':
     unittest.main()
