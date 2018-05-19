@@ -42,3 +42,32 @@
 #     (int) length = 4
 # Output:
 #     (int) 14
+
+from functools import reduce
+
+def generate_queue( start, queue_size, level ):
+
+    print( level )
+
+    queue_start = start + level*queue_size
+    queue_end = queue_start + (queue_size - level)
+
+    return [ x for x in range( queue_start, queue_end ) ]
+
+
+def check_sum( start, length ):
+
+    queue = generate_queue( start, length, 0 )
+
+    checksum = reduce(lambda i, j: i ^ j, queue)
+
+    level = 1
+    while True:
+        queue = generate_queue( start, length, level )
+        if queue:
+            level += 1
+            checksum ^= reduce(lambda i, j: i ^ j, queue)
+        else:
+            break
+
+    return checksum
