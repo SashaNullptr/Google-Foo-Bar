@@ -43,36 +43,67 @@
 # Output:
 #     (int) 14
 
-from functools import reduce
+def XOR_1_to_n( n ):
+    """
+    Compute the exclusive or of all elements in the sequence (1,2,..,n)
 
-def generate_queue( start, queue_size, level ):
+    This function relies on the fact that the following holds for any n.
 
-    print( level )
+    1^2^...^n = f(n mod 4) for ^ the XOR operator and
+    f(n) = {
+            n, n = 0
+            1, n = 1
+            n+1, n = 2
+            0, n = 3
+            }
+    """
+    remainder = [n,1,n+1,0]
+    return remainder[n%4]
 
-    queue_start = start + level*queue_size
-    queue_end = queue_start + (queue_size - level)
+def XOR_int_seq( a, b ):
+    """
+    Compute the exclusive or off all elements in the sequence (a,a+1,...,b-1,b)
+    for a >= 1 and b > a.
 
-    return [ x for x in range( queue_start, queue_end ) ]
+    Let a ^ b be the exclusive or of integers a and b.
+    Define ( a ^ a+1 ^ .. ^ b-1 ^ b ) = S
+    Define ( 1 ^ 2 ^ .. ^ a ) = A
+    Define ( 1 ^ 2 ^ ... ^ b ) = B
 
-def XOR_1_to_n( a ):
-    res = [a,1,a+1,0]
-    return res[a%4]
-
-def super_XOR( a, b ):
+    Then B = (1 ^ 2 ^ ... ^ b )
+           = ( 1 ^ 2 ^ ,,, ^ a-1 ) ^ ( a ^ a+1 ^ ... ^ b ) ( since a < b )
+           = XOR_1_to_n( a-1 ) ^ ( a ^ ... ^ b ) ( definition of XOR_1_to_n )
+           = XOR_1_to_n( a-1 ) ^ S ( definition of S )
+           => S = XOR_1_to_n(b) ^ XOR_1_to_n(a-1) ( by commutativity ).
+    Then
+    """
     return XOR_1_to_n(b)^XOR_1_to_n(a-1)
 
 def queue_check_sum( start, queue_size, level ):
+    """
+    Compute the checksum for a particular queue.
+
+    We define the queue "level" to be zero for the first queue, one for the second etc.
+    It is easy enough to show that the queue at the n'th level will take on values from
+    [ s + l*q_s, (s+l*q_s)+(q_s-l) ] for s the starting number, l the current level,
+    and q_s the size of each queue.
+    """
 
     queue_start = start + level*queue_size
     queue_end = queue_start + (queue_size - level)
 
 
     if( queue_start == 0 ):
-        return 0^super_XOR( queue_start+1, queue_end-1 )
+        # Compensate for the condition that XOR_1_to_n must start at 1.
+        return 0^XOR_int_seq( queue_start+1, queue_end-1 )
     else:
-        return super_XOR( queue_start, queue_end-1 )
+        return XOR_int_seq( queue_start, queue_end-1 )
 
 def check_sum( start, length ):
+    """
+    Compute the checksum over all queues starting with security ID "start" and
+    with a queue size of "length".
+    """
 
     checksum = queue_check_sum( start, length, 0 )
 

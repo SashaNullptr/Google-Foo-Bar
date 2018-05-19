@@ -21,17 +21,6 @@ def print_function_name(func):
 class SolutionTest( unittest.TestCase ):
 
     @print_function_name
-    def test_queue(self):
-        s = 17
-        l = 4
-
-        self.assertEqual( generate_queue( s, l, 0 ), [17,18,19,20] )
-        self.assertEqual( generate_queue( s, l, 1 ), [21,22,23] )
-        self.assertEqual( generate_queue( s, l, 2 ), [25,26] )
-        self.assertEqual( generate_queue( s, l, 3 ), [29] )
-        self.assertEqual( generate_queue( s, l, 4 ), [] )
-
-    @print_function_name
     def test_basic_1(self):
         s = 0
         l = 3
@@ -46,7 +35,7 @@ class SolutionTest( unittest.TestCase ):
         ans = check_sum( s, l )
 
         self.assertEqual( ans, 14 )
-    
+
     @print_function_name
     def test_large(self):
         s = 0
