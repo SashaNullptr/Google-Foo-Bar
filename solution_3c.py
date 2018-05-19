@@ -59,26 +59,20 @@ def queue_check_sum( start, queue_size, level ):
     queue_start = start + level*queue_size
     queue_end = queue_start + (queue_size - level)
 
-    this_check_sum = 0
+    this_check_sum = queue_start
 
-    for x in range( queue_start, queue_end ):
+    for x in range( queue_start + 1, queue_end ):
         this_check_sum ^= x
 
-    return x
+    return this_check_sum
 
 def check_sum( start, length ):
 
-    queue = generate_queue( start, length, 0 )
-
-    checksum = reduce(lambda i, j: i ^ j, queue)
+    checksum = queue_check_sum( start, length, 0 )
 
     level = 1
-    while True:
-        queue = generate_queue( start, length, level )
-        if queue:
-            level += 1
-            checksum ^= queue_check_sum
-        else:
-            break
+    while ( length - level ) > 0:
+        checksum ^= queue_check_sum( start, length, level )
+        level += 1
 
     return checksum
