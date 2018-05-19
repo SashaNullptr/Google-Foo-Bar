@@ -54,6 +54,17 @@ def generate_queue( start, queue_size, level ):
 
     return [ x for x in range( queue_start, queue_end ) ]
 
+def queue_check_sum( start, queue_size, level ):
+
+    queue_start = start + level*queue_size
+    queue_end = queue_start + (queue_size - level)
+
+    this_check_sum = 0
+
+    for x in range( queue_start, queue_end ):
+        this_check_sum ^= x
+
+    return x
 
 def check_sum( start, length ):
 
@@ -66,7 +77,7 @@ def check_sum( start, length ):
         queue = generate_queue( start, length, level )
         if queue:
             level += 1
-            checksum ^= reduce(lambda i, j: i ^ j, queue)
+            checksum ^= queue_check_sum
         else:
             break
 
