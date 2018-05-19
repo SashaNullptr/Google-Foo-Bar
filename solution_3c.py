@@ -54,17 +54,23 @@ def generate_queue( start, queue_size, level ):
 
     return [ x for x in range( queue_start, queue_end ) ]
 
+def XOR_1_to_n( a ):
+    res = [a,1,a+1,0]
+    return res[a%4]
+
+def super_XOR( a, b ):
+    return XOR_1_to_n(b)^XOR_1_to_n(a-1)
+
 def queue_check_sum( start, queue_size, level ):
 
     queue_start = start + level*queue_size
     queue_end = queue_start + (queue_size - level)
 
-    this_check_sum = queue_start
 
-    for x in range( queue_start + 1, queue_end ):
-        this_check_sum ^= x
-
-    return this_check_sum
+    if( queue_start == 0 ):
+        return 0^super_XOR( queue_start+1, queue_end-1 )
+    else:
+        return super_XOR( queue_start, queue_end-1 )
 
 def check_sum( start, length ):
 

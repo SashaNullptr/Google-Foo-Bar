@@ -46,11 +46,11 @@ class SolutionTest( unittest.TestCase ):
         ans = check_sum( s, l )
 
         self.assertEqual( ans, 14 )
-
+    
     @print_function_name
     def test_large(self):
         s = 0
-        l = 4000
+        l = 400000
         ans = check_sum( s, l )
 
         self.assertTrue( True )
