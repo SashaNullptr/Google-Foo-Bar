@@ -34,6 +34,7 @@ class SolutionTest( unittest.TestCase ):
 
         self.assertEqual( ans, 2 )
 
+    @print_function_name
     def test_basic_3(self):
         t = 200
         ans = num_staircases( t )

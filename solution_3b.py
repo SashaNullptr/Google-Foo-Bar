@@ -53,44 +53,47 @@
 # Output:
 #     (int) 487067745
 
-def helper( t, p, n, memo ):
+# It would be remiss of me to not mention that this question seems to be
+# a copy of Timus 1017: Staircases ( http://acm.timus.ru/problem.aspx?space=1&num=1017&locale=en ).
+# I have inevitably benefitted from the myriad of people who have discussed solutions
+# and written about their thoughts process regarding this question. I do not think my
+# current solution, which uses memoization, would have been possible without observing
+# the work of other people who tackled this problem.
 
-    if( t == n ):
+def new_combinations_at_level( level, off_diagonal, n, memo ):
+    """
+    Count the number of -new- combinations of staircases possible at a particular level.
+    """
+
+    if( level == n ):
+        # We've hit the max possible level
         return 1
 
-    if( memo[t][p] != -1 ):
-        return memo[t][p]
+    if( memo[level][off_diagonal] != -1 ):
+        # We've already visited this element, so return the computed value.
+        return memo[level][off_diagonal]
 
-    memo[t][p] = 0
+    # Mark this element as one we've previously visited.
+    memo[level][off_diagonal] = 0
 
-    for i in range( p+1, n-t+1 ):
-        memo[t][p] += helper( t+i, i, n, memo )
+    for i in range( off_diagonal+1, n-level+1 ):
+        memo[level][off_diagonal] += new_combinations_at_level( level+i, i, n, memo )
 
-    return memo[t][p]
+    return memo[level][off_diagonal]
 
 def num_staircases( n ):
+    """
+    Count the number of staircases possible for a given number of bricks.
+    """
+    # Initialize the "matrix" of previously computed values.
+    # We will use "-1" as a marker for "this state has not been visited previously".
     memo = [[-1 for x in range(n+1)] for y in range(n+1)]
 
     tot_staircases = 0
 
     for j in range (1,n):
-        tot_staircases += helper(j,j,n,memo)
+        # Note we will store the total numbers of combinations per level on the
+        # main diagonal of our "matrix" of previously computed values.
+        tot_staircases += new_combinations_at_level(j,j,n,memo)
 
     return tot_staircases
-
-# def solve( n, m, memo ):
-#     if n == 0:
-#         return 1
-#     if m == 0:
-#         return 0
-#
-#     ret = memo[n][m]
-#
-#     if ret == -1:
-#         ret = ( solve(n-m,m-1,memo) if n >= m else 0 ) + solve(n,m-1,memo)
-#     return ret
-#
-# def num_staircases( n ):
-#     memo = [[-1 for x in range(n+1)] for y in range(n+1)]
-#
-#     return solve( n, n-1, memo )
