@@ -49,3 +49,54 @@
 #     (int) time_limit = 1
 # Output:
 #     (int list) [1, 2]
+
+
+class TimeScenario:
+
+    def __init__( self, mat, time_limit ):
+        self.__mat = mat
+        self.__time_limit = time_limit
+
+        self.__current_time = time_limit
+        self.__current_position = 0
+        self.__rescued_prisoners = []
+
+    def __call__( self ):
+        while( len(self.__rescued_prisoners) < len(self.__mat)-2 ):
+            next_position = self.__min_time_position( self.__current_position )
+            self.__update_position( self.__current_position, next_position )
+
+        return self.__rescued_prisoners
+
+    def __update_position( self, prev_pos, next_pos ):
+
+        print( "Moving from position ", prev_pos, " to ", next_pos )
+
+        self.__current_position = next_pos
+        self.__current_time -= self.__to_from_time( prev_pos, next_pos )
+
+        if next_pos != 0 and next_pos != len( self.__mat ):
+            if next_pos not in self.__rescued_prisoners:
+                self.__rescued_prisoners.append( next_pos )
+            # self.__erase_bunny_position( next_pos )
+
+    def __min_time_position( self, current_position ):
+        all_times = [ self.__to_from_time( current_position, col ) for col in range(len(self.__mat)) ]
+        print( "All Times: ", all_times )
+        # [time for time in all_times if time != 0 ]
+        min_index = all_times.index(min( [time for time in all_times if time not in self.__rescued_prisoners] ))
+        print( "Min time index: ", min_index )
+
+        return all_times.index(min(all_times))
+
+    def __to_from_time( self, row, col ):
+        print( "Row column: ", row, col )
+        return self.__mat[row][col]
+
+    def __erase_bunny_position( self, pos ):
+
+        print( "Erasing position ", pos )
+
+        del self.__mat[pos]
+        for row in self.__mat:
+            del row[pos]
